@@ -126,27 +126,132 @@ State state_create() {
 // Επιστρέφει τις βασικές πληροφορίες του παιχνιδιού στην κατάσταση state
 
 StateInfo state_info(State state) {
-	// Προς υλοποίηση
-	return NULL;
+	return &state->info;
 }
 
 // Επιστρέφει μια λίστα με όλα τα αντικείμενα του παιχνιδιού στην κατάσταση state,
 // των οποίων η συντεταγμένη y είναι ανάμεσα στο y_from και y_to.
 
 List state_objects(State state, float y_from, float y_to) {
-	// Προς υλοποίηση
-	return NULL;
+	List list_objects = list_create(NULL);
+	for(ListNode node=list_first(state->objects) ; node!=LIST_EOF ; node=list_next(state->objects, node)) {
+		Object obj = list_node_value(state->objects, node);
+		if(obj->rect.y >= y_from && obj->rect.y <= y_to )
+			list_insert_next(list_objects, LIST_BOF,obj);
+    }
+	return list_objects;
 }
 
 // Ενημερώνει την κατάσταση state του παιχνιδιού μετά την πάροδο 1 frame.
 // Το keys περιέχει τα πλήκτρα τα οποία ήταν πατημένα κατά το frame αυτό.
 
 void state_update(State state, KeyState keys) {
-	// Προς υλοποίηση
+  if(state->info.playing) {
+		if(!(keys->up))
+			state->info.jet->rect.y -=3 * (state->speed_factor);
+		if(keys->up)
+			state->info.jet->rect.y -=6 * (state->speed_factor);
+		if(keys->down)
+			state->info.jet->rect.y -=2 * (state->speed_factor);
+		if(keys->right)
+			state->info.jet->rect.x +=3 * (state->speed_factor);
+		if(keys->left)
+			state->info.jet->rect.x -=3 * (state->speed_factor);
+		if(keys->space) {
+			if((state->info.missile == NULL)) {
+			state->info.missile = create_object(MISSILE,state->info.jet->rect.x,state->info.jet->rect.y,5,10);
+			}
+		}
+		if((state->info.missile != NULL)) {
+			state->info.missile->rect.y -=10 * (state->speed_factor);
+			if((state->info.missile->rect.y < -800))
+				state->info.missile = NULL;
+		}
+	for(ListNode node=list_first(state->objects) ; node!=LIST_EOF ; node=list_next(state->objects, node)) {
+		Object obj = list_node_value(state->objects, node);
+		if(obj->type == BRIDGE) {
+			if(state->info.jet->rect.y - obj->rect.y <=-800) {
+				add_objects(state, obj->rect.y);
+				state->speed_factor = 1.3 * state->speed_factor;
+			}
+		}
+		if(obj->forward) {
+			if((obj->type == HELICOPTER)) {
+				obj->rect.x +=4 * (state->speed_factor);
+			}
+			else if((obj->type == WARSHIP)) {
+				obj->rect.x +=3 * (state->speed_factor);
+			}
+		}
+		else {
+			if((obj->type == HELICOPTER)) {
+				obj->rect.x -=4 * (state->speed_factor);
+			}
+			else if((obj->type == WARSHIP)) {
+				obj->rect.x -=3 * (state->speed_factor);
+			}
+		}
+		//έλεγχος συγκρούσεων
+		if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP || obj->type == TERRAIN ) {
+			if(CheckCollisionRecs(state->info.jet->rect, obj->rect)) {
+				state->info.playing = false;
+				return;
+			}
+			if(obj->type == TERRAIN) {
+				if((state->info.missile != NULL)) {
+					if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
+						state->info.missile = NULL;
+					}
+				}
+			}
+			ListNode last_node;
+			if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP) {
+				if((state->info.missile != NULL)) {
+					if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
+						state->info.missile = NULL;
+						list_remove_next(state->objects, last_node);
+						state->info.score +=10;
+					}
+				}
+				last_node=node;	
+			}
+		}
+		if(obj->type == HELICOPTER || obj->type == WARSHIP) {
+			Object Enemy = obj;
+			if (obj->type == TERRAIN) {
+				if(CheckCollisionRecs(obj->rect,Enemy->rect)) {
+					if((Enemy->forward)) {
+						Enemy->forward = false;
+					}
+					else if(!(Enemy->forward)) {
+						Enemy->forward = true;
+					}
+				}
+			}	
+		}
+	}
+	if((state->info.playing == false)) {
+		if(keys->enter)
+			state->info.playing = true;
+	}
+	if(keys->p) {
+		state->info.paused = true;
+	}
+	if((state->info.paused == true)) {
+		if(keys->n) {
+		state_update(state,keys);
+		return;
+		}
+		if(keys->p) {
+			state->info.paused = false;
+		}
+	}
+  }
 }
+
 
 // Καταστρέφει την κατάσταση state ελευθερώνοντας τη δεσμευμένη μνήμη.
 
-void state_destroy(State state) {
+//void state_destroy(State state) {
 	// Προς υλοποίηση
-}
+//}

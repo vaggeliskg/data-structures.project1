@@ -19,10 +19,15 @@ void test_state_create() {
 	TEST_ASSERT(info->playing);
 	TEST_ASSERT(!info->paused);
 	TEST_ASSERT(info->score == 0);
-
-	// Προσθέστε επιπλέον ελέγχους
+	TEST_ASSERT(info->missile == NULL);
+	TEST_ASSERT(info->jet->rect.y == 0);
+	List state_objects(State state, float y_from, float y_to); 
+	List objects = state_objects(state,0,-800);
+	TEST_ASSERT(objects != NULL);
+	TEST_ASSERT(state_objects(state,-5,-800) != NULL);
+	TEST_ASSERT(state_objects(state,-5,-3000) != NULL);
+	TEST_ASSERT(state_objects(state,-160,-700) != NULL);
 }
-
 void test_state_update() {
 	State state = state_create();
 	TEST_ASSERT(state != NULL && state_info(state) != NULL);
@@ -46,6 +51,12 @@ void test_state_update() {
 	TEST_CHECK( new_rect.x == old_rect.x && new_rect.y == old_rect.y - 6 );
 
 	// Προσθέστε επιπλέον ελέγχους
+	keys.space = true;
+	state_update(state, &keys);
+	Rectangle old_missile = state_info(state)->missile->rect;
+	state_update(state, &keys);
+	Rectangle new_missile = state_info(state)->missile->rect;
+	TEST_ASSERT(new_missile.x == old_missile.x && new_missile.y == old_missile.y -10);
 }
 
 
