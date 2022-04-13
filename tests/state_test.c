@@ -5,7 +5,6 @@
 //////////////////////////////////////////////////////////////////
 
 #include "acutest.h"			// Απλή βιβλιοθήκη για unit testing
-
 #include "state.h"
 
 void test_state_create() {
@@ -23,6 +22,7 @@ void test_state_create() {
 	TEST_ASSERT(info->jet->rect.y == 0);
 	List state_objects(State state, float y_from, float y_to); 
 	List objects = state_objects(state,0,-800);
+	TEST_ASSERT(list_size(objects) !=0);
 	TEST_ASSERT(objects != NULL);
 	TEST_ASSERT(state_objects(state,-5,-800) != NULL);
 	TEST_ASSERT(state_objects(state,-5,-3000) != NULL);
@@ -57,9 +57,27 @@ void test_state_update() {
 	state_update(state, &keys);
 	Rectangle new_missile = state_info(state)->missile->rect;
 	TEST_ASSERT(new_missile.x == old_missile.x && new_missile.y == old_missile.y -10);
+
+	//έλεγχος συγκρούσεων
+
+	//List state_objects(State state, float y_from, float y_to); 
+	//List objects = state_objects(state,0,-1600);
+	//int initial_list_size = list_size(objects);
+	//keys.space = true;
+	//state_update(state, &keys);
+	//for(ListNode node=list_first(objects) ; node!=LIST_EOF ; node=list_next(objects, node)) {
+		//Object obj = list_node_value(objects, node);
+
+		//state_info(state)->missile->rect.y = -50;
+		//state_info(state)->missile->rect.x = 50;
+		//obj->rect.y = -50;
+		//obj->rect.x = 50;
+		//state_update(state, &keys);
+
+			//TEST_ASSERT(CheckCollisionRecs(state_info(state)->missile->rect,obj->rect));
+			//TEST_ASSERT(list_size(objects) == initial_list_size);	
+//	}
 }
-
-
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {
 	{ "test_state_create", test_state_create },
