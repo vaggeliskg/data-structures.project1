@@ -60,23 +60,18 @@ void test_state_update() {
 
 	//έλεγχος συγκρούσεων
 
-	//List state_objects(State state, float y_from, float y_to); 
-	//List objects = state_objects(state,0,-1600);
-	//int initial_list_size = list_size(objects);
-	//keys.space = true;
-	//state_update(state, &keys);
-	//for(ListNode node=list_first(objects) ; node!=LIST_EOF ; node=list_next(objects, node)) {
-		//Object obj = list_node_value(objects, node);
+	List objects = state_objects(state,0,-5000);
+	state_update(state, &keys);
+	for(ListNode node=list_first(objects) ; node!=LIST_EOF ; node=list_next(objects, node)) {
+		Object obj = list_node_value(objects, node);
 
-		//state_info(state)->missile->rect.y = -50;
-		//state_info(state)->missile->rect.x = 50;
-		//obj->rect.y = -50;
-		//obj->rect.x = 50;
-		//state_update(state, &keys);
-
-			//TEST_ASSERT(CheckCollisionRecs(state_info(state)->missile->rect,obj->rect));
-			//TEST_ASSERT(list_size(objects) == initial_list_size);	
-//	}
+		if(obj->type == HELICOPTER || obj->type == BRIDGE || obj->type == WARSHIP ) {
+			state_info(state)->missile->rect = obj->rect;
+			TEST_ASSERT(CheckCollisionRecs(state_info(state)->missile->rect,obj->rect));
+		}
+	}		
+	state_update(state, &keys);
+	TEST_ASSERT(state_info(state)->missile == NULL);
 }
 // Λίστα με όλα τα tests προς εκτέλεση
 TEST_LIST = {

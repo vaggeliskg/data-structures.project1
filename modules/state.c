@@ -164,91 +164,92 @@ void state_update(State state, KeyState keys) {
 		}
 		if((state->info.missile != NULL)) {
 			state->info.missile->rect.y -=10 * (state->speed_factor);
-			if((abs(state->info.missile->rect.y) > 800))
+			if((abs(state->info.missile->rect.y) -(abs(state->info.jet->rect.y)) > 800))
 				state->info.missile = NULL;
 		}
 		ListNode last_node = LIST_BOF;
-		List list_objects = state_objects(state,0,-1600);
-	for(ListNode node=list_first(list_objects) ; node!=LIST_EOF ; node=list_next(list_objects, node)) {
-		Object obj = list_node_value(list_objects, node);
-		if(obj->type == BRIDGE) {
-			if(state->info.jet->rect.y - obj->rect.y <=-800) {
-				add_objects(state, obj->rect.y);
-				state->speed_factor = 1.3 * state->speed_factor;
+		List list_objects = state_objects(state,0,-5000);
+		for(ListNode node=list_first(list_objects) ; node!=LIST_EOF ; node=list_next(list_objects, node)) {
+			Object obj = list_node_value(list_objects, node);
+			if(obj->type == BRIDGE) {
+				if(abs(state->info.jet->rect.y) - abs(obj->rect.y) >= 800) {
+					add_objects(state, obj->rect.y);
+					state->speed_factor = 1.3 * state->speed_factor;
+				}
 			}
-		}
-		if(obj->forward) {
-			if((obj->type == HELICOPTER)) {
-				obj->rect.x +=4 * (state->speed_factor);
+			if(obj->forward) {
+				if((obj->type == HELICOPTER)) {
+					obj->rect.x +=4 * (state->speed_factor);
+				}
+				else if((obj->type == WARSHIP)) {
+					obj->rect.x +=3 * (state->speed_factor);
+				}
 			}
-			else if((obj->type == WARSHIP)) {
-				obj->rect.x +=3 * (state->speed_factor);
-			}
-		}
-		else {
-			if((obj->type == HELICOPTER)) {
+			else {
+				if((obj->type == HELICOPTER)) {
 				obj->rect.x -=4 * (state->speed_factor);
-			}
-			else if((obj->type == WARSHIP)) {
+				}
+				else if((obj->type == WARSHIP)) {
 				obj->rect.x -=3 * (state->speed_factor);
+				}
 			}
-		}
-		//έλεγχος συγκρούσεων
-		if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP || obj->type == TERRAIN ) {
-			if(CheckCollisionRecs(state->info.jet->rect, obj->rect)) {
-				state->info.playing = false;
-				return;
-			}
-			if(obj->type == TERRAIN) {
-				if((state->info.missile != NULL)) {
-					if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
-						state->info.missile = NULL;
+			//έλεγχος συγκρούσεων
+			if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP || obj->type == TERRAIN ) {
+				if(CheckCollisionRecs(state->info.jet->rect, obj->rect)) {
+					state->info.playing = false;
+					return;
+				}
+				if(obj->type == TERRAIN) {
+					if((state->info.missile != NULL)) {
+						if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
+							state->info.missile = NULL;
+						}
+					}
+				}
+				//ListNode last_node;
+				if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP) {
+					if((state->info.missile != NULL)) {
+						if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
+							state->info.missile = NULL;
+							list_remove_next(list_objects, last_node);
+							free(last_node);
+							state->info.score +=10;
+						}
 					}
 				}
 			}
-			//ListNode last_node;
-			if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP) {
-				if((state->info.missile != NULL)) {
-					if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
-						state->info.missile = NULL;
-						list_remove_next(list_objects, last_node);
-						state->info.score +=10;
+			last_node=node;	
+			if(obj->type == HELICOPTER || obj->type == WARSHIP) {
+				Object Enemy = obj;
+				if (obj->type == TERRAIN) {
+					if(CheckCollisionRecs(obj->rect,Enemy->rect)) {
+						if((Enemy->forward)) {
+							Enemy->forward = false;
+						}
+						else if(!(Enemy->forward)) {
+							Enemy->forward = true;
+						}
 					}
-				}
-				last_node=node;	
+				}	
 			}
 		}
-		if(obj->type == HELICOPTER || obj->type == WARSHIP) {
-			Object Enemy = obj;
-			if (obj->type == TERRAIN) {
-				if(CheckCollisionRecs(obj->rect,Enemy->rect)) {
-					if((Enemy->forward)) {
-						Enemy->forward = false;
-					}
-					else if(!(Enemy->forward)) {
-						Enemy->forward = true;
-					}
-				}
-			}	
-		}
-	}
-	if((state->info.playing == false)) {
-		if(keys->enter)
-			state->info.playing = true;
-	}
-	if(keys->p) {
-		state->info.paused = true;
-	}
-	if((state->info.paused == true)) {
-		if(keys->n) {
-		state_update(state,keys);
-		return;
+		if((state->info.playing == false)) {
+			if(keys->enter)
+				state->info.playing = true;
 		}
 		if(keys->p) {
-			state->info.paused = false;
+			state->info.paused = true;
 		}
-	}
-  }
+		if((state->info.paused == true)) {
+			if(keys->n) {
+			state_update(state,keys);
+			return;
+			}
+			if(keys->p) {
+				state->info.paused = false;
+			}
+		}
+  	}
 }
 
 

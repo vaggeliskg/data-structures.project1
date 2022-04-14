@@ -24,7 +24,6 @@ void interface_draw_frame(State state) {
     //StateInfo info = state_info(state);
     int x_offset = (state_info(state)->jet->rect.x - 100);
     int y_offset = -(SCREEN_HEIGHT - 100);
-
     DrawCircle(state_info(state)->missile->rect.x - x_offset,state_info(state)->missile->rect.y - y_offset, 15, RED);
 
 
