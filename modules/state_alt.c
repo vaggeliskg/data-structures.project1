@@ -148,8 +148,11 @@ List state_objects(State state, float y_from, float y_to) {
 	List list_objects = list_create(NULL); 
     Object obj = malloc(sizeof(*obj));
     obj->rect.y = y_from;
+	Object object = malloc(sizeof(*object));
+	object->rect.y = y_to;
     Object first = set_find_eq_or_greater(state->objects, obj);
-    for(SetNode node = set_find_node(state->objects, first); node != SET_EOF; node = set_next(state->objects, node)) {
+	Object second = set_find_eq_or_smaller(state->objects, object);
+    for(SetNode node = set_find_node(state->objects, first); node != set_find_node(state->objects, second); node = set_next(state->objects, node)) {
         Object object = set_node_value(state->objects, node);
         list_insert_next(list_objects, LIST_BOF, object);
     }
@@ -160,8 +163,8 @@ List state_objects(State state, float y_from, float y_to) {
 // Το keys περιέχει τα πλήκτρα τα οποία ήταν πατημένα κατά το frame αυτό.
 
 void state_update(State state, KeyState keys) {
-  if(state->info.playing) {
-       if(!(keys->up))
+  	if(state->info.playing) {
+       		if(!(keys->up))
 			    state->info.jet->rect.y -=3 * (state->speed_factor);
 		    if(keys->up)
 			    state->info.jet->rect.y -=6 * (state->speed_factor);
@@ -178,57 +181,63 @@ void state_update(State state, KeyState keys) {
 		    }
 		    if((state->info.missile != NULL)) {
 			    state->info.missile->rect.y -=10 * (state->speed_factor);
-			    if((state->info.missile->rect.y < -800))
+			    if((abs(state->info.missile->rect.y) -(abs(state->info.jet->rect.y)) > 800))
 				    state->info.missile = NULL;
 		    }
-			List list_objects = state_objects(state,0,-5000);
 			ListNode last_node = LIST_BOF;
+			List list_objects = state_objects(state,0,-5000);
+			//int count = 0;
 			for(ListNode node=list_first(list_objects) ; node!=LIST_EOF ; node=list_next(list_objects, node)) {
           		Object obj = list_node_value(list_objects, node);
-        		if(state->info.jet->rect.y - obj->rect.y <= - 1600) {
-		    	if(obj->type == BRIDGE) {
-			    	if(state->info.jet->rect.y - obj->rect.y <=-800) {
-				    	add_objects(state, obj->rect.y);
-				    	state->speed_factor = 1.3 * state->speed_factor;
-				    }
-		 		}
-		  		if(obj->forward) {
-			    	if((obj->type == HELICOPTER)) {
-				    	obj->rect.x +=4 * (state->speed_factor);
-			    	}
-			    	else if((obj->type == WARSHIP)) {
-				    	obj->rect.x +=3 * (state->speed_factor);
-			    	}
-		    	}
-		   		else {
-			    	if((obj->type == HELICOPTER)) {
-				   		obj->rect.x -=4 * (state->speed_factor);
-			    	}
-			    	else if((obj->type == WARSHIP)) {
-				    	obj->rect.x -=3 * (state->speed_factor);
-			    	}
-		    	}
-		    	//έλεγχος συγκρούσεων
-		    	if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP || obj->type == TERRAIN ) {
-			    	if(CheckCollisionRecs(state->info.jet->rect, obj->rect)) {
-				    	state->info.playing = false;
-				    	return;
+        		if(abs(state->info.jet->rect.y) - abs(obj->rect.y) <= 1600) {
+		    		if(obj->type == BRIDGE) {
+						//count++;
+						//if(count >= 20) {
+			    			if(abs(state->info.jet->rect.y) - abs(obj->rect.y) >= 800) {
+				    			add_objects(state, obj->rect.y);
+				    			state->speed_factor = 1.3 * state->speed_factor;
+				    		}
+		 				//}
 					}
-					if(obj->type == TERRAIN) {
-						if((state->info.missile != NULL)) {
-							if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
-								state->info.missile = NULL;
-							}
+		  			if(obj->forward) {
+			    		if((obj->type == HELICOPTER)) {
+				    		obj->rect.x +=4 * (state->speed_factor);
+			    		}
+			    		else if((obj->type == WARSHIP)) {
+				    		obj->rect.x +=3 * (state->speed_factor);
+			    		}
+		    		}
+		   			else {
+			    		if((obj->type == HELICOPTER)) {
+				   			obj->rect.x -=4 * (state->speed_factor);
+			    		}
+			    		else if((obj->type == WARSHIP)) {
+				   		 	obj->rect.x -=3 * (state->speed_factor);
+			    		}
+		    		}
+		    		//έλεγχος συγκρούσεων
+		    		if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP || obj->type == TERRAIN ) {
+			    		if(CheckCollisionRecs(state->info.jet->rect, obj->rect)) {
+				    		state->info.playing = false;
+				    		return;
 						}
-					}	
-					if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP) {
-						if((state->info.missile != NULL)) {
-							if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
-								state->info.missile = NULL;
-								list_remove_next(list_objects, last_node);
-								state->info.score +=10;
+						if(obj->type == TERRAIN) {
+							if((state->info.missile != NULL)) {
+								if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
+									state->info.missile = NULL;
+								}
 							}
-						}	
+						}		
+						if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP) {
+							if((state->info.missile != NULL)) {
+								if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
+									state->info.missile = NULL;
+									list_remove_next(list_objects, last_node);
+									free(last_node);
+									state->info.score +=10;
+								}
+							}	
+						}
 					}
 					last_node = node;
 					if(obj->type == HELICOPTER || obj->type == WARSHIP) {
@@ -247,27 +256,29 @@ void state_update(State state, KeyState keys) {
 									}
 								}
 						}	
-					}
-				}		
-				if((state->info.playing == false)) {
-					if(keys->enter)
-						state->info.playing = true;
-				}
-				if(keys->p) {
-					state->info.paused = true;
-				}
-				if((state->info.paused == true)) {
-					if(keys->n) {
-						state_update(state,keys);
-						return;
+					}		
+					if((state->info.playing == false)) {
+						if(keys->enter)
+							state->info.playing = true;
 					}
 					if(keys->p) {
-					state->info.paused = false;
+						state->info.paused = true;
 					}
+					if((state->info.paused == true)) {
+						if(keys->n) {
+							state_update(state,keys);
+							return;
+						}
+						if(keys->p) {
+						state->info.paused = false;
+						}
     
-				}
-  			}
- 		}
+					}
+  				}
+ 			}
+			//for(ListNode node=list_first(list_objects) ; node!=LIST_EOF ; node=list_next(list_objects, node)) {
+				//τρεχει τη λιστα με τα αντικειμενα και με ενα καουντερ μετρα της γεφυρες μολις φτασει στην τελευταια απο κει και μετα προσθετει objects 
+			//}
  	}
 }
 

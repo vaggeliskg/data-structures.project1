@@ -146,7 +146,7 @@ List state_objects(State state, float y_from, float y_to) {
 // Το keys περιέχει τα πλήκτρα τα οποία ήταν πατημένα κατά το frame αυτό.
 
 void state_update(State state, KeyState keys) {
-  if(state->info.playing) {
+	if(state->info.playing) {
 		if(!(keys->up))
 			state->info.jet->rect.y -=3 * (state->speed_factor);
 		if(keys->up)
@@ -168,7 +168,9 @@ void state_update(State state, KeyState keys) {
 				state->info.missile = NULL;
 		}
 		ListNode last_node = LIST_BOF;
-		List list_objects = state_objects(state,0,-5000);
+
+		int state_y_offset = -state->info.jet->rect.y;
+		List list_objects = state_objects(state, -state_y_offset + SCREEN_WIDTH, -state_y_offset - 2*SCREEN_WIDTH);
 		for(ListNode node=list_first(list_objects) ; node!=LIST_EOF ; node=list_next(list_objects, node)) {
 			Object obj = list_node_value(list_objects, node);
 			if(obj->type == BRIDGE) {
@@ -233,23 +235,26 @@ void state_update(State state, KeyState keys) {
 				}	
 			}
 		}
-		if((state->info.playing == false)) {
-			if(keys->enter)
-				state->info.playing = true;
-		}
 		if(keys->p) {
 			state->info.paused = true;
-		}
+		}	
 		if((state->info.paused == true)) {
 			if(keys->n) {
-			state_update(state,keys);
-			return;
+				state_update(state,keys);
+				return;
 			}
 			if(keys->p) {
 				state->info.paused = false;
 			}
 		}
-  	}
+	}
+	if((state->info.playing == false)) {
+		if(keys->enter) {
+			state_create();
+			return;
+		}
+	}
+	
 }
 
 

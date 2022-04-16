@@ -68,6 +68,7 @@ void test_state_update() {
 		if(obj->type == HELICOPTER || obj->type == BRIDGE || obj->type == WARSHIP ) {
 			state_info(state)->missile->rect = obj->rect;
 			TEST_ASSERT(CheckCollisionRecs(state_info(state)->missile->rect,obj->rect));
+			break;
 		}
 	}		
 	state_update(state, &keys);
