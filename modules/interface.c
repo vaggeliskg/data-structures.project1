@@ -30,7 +30,9 @@ void interface_draw_frame(State state) {
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
+
     StateInfo info = state_info(state);
+    //if(IsKeyDown(KEY_RIGHT)) info->jet->rect.x +=2;
 
     //int x_offset = (state_info(state)->jet->rect.x - 200 );
     int x_offset = 0;
@@ -43,10 +45,10 @@ void interface_draw_frame(State state) {
 
     BeginMode2D(camera);
 
-
+    
     DrawCircle(info->jet->rect.x - x_offset , info->jet->rect.y - y_offset, 15, RED);
 
-    //printf("x: %f  y: %f\n", info->jet->rect.x, info->jet->rect.y);
+    printf("x: %f  y: %f\n", info->jet->rect.x, info->jet->rect.y);
     
     int state_y_offset = -info->jet->rect.y;
     List objects = state_objects(state, -state_y_offset + SCREEN_WIDTH, -state_y_offset - 2*SCREEN_WIDTH);
@@ -59,7 +61,8 @@ void interface_draw_frame(State state) {
             DrawRectangleRec(temp_obj->rect, YELLOW);
         }
          if(obj->type == BRIDGE) {
-            DrawRectangle(obj->rect.x - x_offset , obj->rect.y - y_offset, obj->rect.width, obj->rect.height, BROWN);
+            Object temp_obj2 = create_object(BRIDGE, obj->rect.x, obj->rect.y - y_offset, obj->rect.width, obj->rect.height);
+            DrawRectangleRec(temp_obj2->rect, BROWN);
         }
         if(obj->type == WARSHIP) {
              DrawRectangle(obj->rect.x - x_offset , obj->rect.y - y_offset, obj->rect.width, obj->rect.height, PINK);

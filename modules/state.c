@@ -176,7 +176,7 @@ void state_update(State state, KeyState keys) {
 			if(obj->type == BRIDGE) {
 				if(abs(state->info.jet->rect.y) - abs(obj->rect.y) >= 800) {
 					add_objects(state, obj->rect.y);
-					state->speed_factor = 1.3 * state->speed_factor;
+					//state->speed_factor = 1.3 * state->speed_factor;
 				}
 			}
 			if(obj->forward) {
@@ -251,6 +251,7 @@ void state_update(State state, KeyState keys) {
 	if((state->info.playing == false)) {
 		if(keys->enter) {
 			state_create();
+			//state_update(state, keys);
 			return;
 		}
 	}

@@ -19,6 +19,7 @@ void update_and_draw() {
     StateInfo info = state_info(state);
     state_update(state, &keys);
     interface_draw_frame(state);
+    //state_update(state, &keys);
 
 
     if(info->playing == false) {
