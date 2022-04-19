@@ -1,6 +1,5 @@
 
 #include <stdlib.h>
-
 #include "ADTList.h"
 #include "state.h"
 
@@ -149,9 +148,9 @@ void state_update(State state, KeyState keys) {
 	if(state->info.playing) {
 		if(!(keys->up))
 			state->info.jet->rect.y -=3 * (state->speed_factor);
-		if(keys->up)
+		else if(keys->up)
 			state->info.jet->rect.y -=6 * (state->speed_factor);
-		if(keys->down)
+		else if(keys->down)
 			state->info.jet->rect.y -=2 * (state->speed_factor);
 		if(keys->right)
 			state->info.jet->rect.x +=3 * (state->speed_factor);
@@ -163,20 +162,20 @@ void state_update(State state, KeyState keys) {
 			}
 		}
 		if((state->info.missile != NULL)) {
-			state->info.missile->rect.y -=10 * (state->speed_factor);
+			state->info.missile->rect.y -=10 *(state->speed_factor);
 			if((abs(state->info.missile->rect.y) -(abs(state->info.jet->rect.y)) > 800))
 				state->info.missile = NULL;
 		}
 		ListNode last_node = LIST_BOF;
 
-		int state_y_offset = -state->info.jet->rect.y;
-		List list_objects = state_objects(state, -state_y_offset + SCREEN_WIDTH, -state_y_offset - 2*SCREEN_WIDTH);
+		int state_objects_offset = -state->info.jet->rect.y;
+		List list_objects = state_objects(state,-state_objects_offset ,-state_objects_offset - 2*SCREEN_HEIGHT );
 		for(ListNode node=list_first(list_objects) ; node!=LIST_EOF ; node=list_next(list_objects, node)) {
 			Object obj = list_node_value(list_objects, node);
 			if(obj->type == BRIDGE) {
-				if(abs(state->info.jet->rect.y) - abs(obj->rect.y) >= 800) {
+			if(abs(state->info.jet->rect.y) - abs(obj->rect.y) >= 800) {
 					add_objects(state, obj->rect.y);
-					//state->speed_factor = 1.3 * state->speed_factor;
+					state->speed_factor = 1.3 * state->speed_factor;
 				}
 			}
 			if(obj->forward) {
@@ -221,7 +220,7 @@ void state_update(State state, KeyState keys) {
 				}
 			}
 			last_node=node;	
-			if(obj->type == HELICOPTER || obj->type == WARSHIP) {
+			if(obj->type == HELICOPTER || obj->type == WARSHIP || obj->type == TERRAIN) {
 				Object Enemy = obj;
 				if (obj->type == TERRAIN) {
 					if(CheckCollisionRecs(obj->rect,Enemy->rect)) {
@@ -240,7 +239,7 @@ void state_update(State state, KeyState keys) {
 		}	
 		if((state->info.paused == true)) {
 			if(keys->n) {
-				state_update(state,keys);
+				//under construction
 				return;
 			}
 			if(keys->p) {
@@ -248,13 +247,15 @@ void state_update(State state, KeyState keys) {
 			}
 		}
 	}
-	if((state->info.playing == false)) {
-		if(keys->enter) {
-			state_create();
+	// //state->info.playing = false;
+	// if((state->info.playing == false)) {
+	// 	//keys->enter = true;
+	// 	if(keys->enter) {
+	// 		state_create();
 			//state_update(state, keys);
-			return;
-		}
-	}
+			//return;
+	//	}
+	//}
 	
 }
 
@@ -264,3 +265,4 @@ void state_update(State state, KeyState keys) {
 //void state_destroy(State state) {
 	// Προς υλοποίηση
 //}
+

@@ -12,43 +12,42 @@ void update_and_draw() {
         .up = IsKeyDown(KEY_UP),
         .down = IsKeyDown(KEY_DOWN),
         .space = IsKeyDown(KEY_SPACE),
-        .enter = IsKeyPressed(KEY_ENTER),
+        .enter = IsKeyDown(KEY_ENTER),
         .n = IsKeyDown(KEY_N),
-        .p = IsKeyPressed(KEY_P),
+        .p = IsKeyDown(KEY_P),
     };
     StateInfo info = state_info(state);
-    state_update(state, &keys);
-    interface_draw_frame(state);
+    //interface_draw_frame(state);
+    //if(info->playing == true) {
+        state_update(state, &keys);
+        interface_draw_frame(state);
+    //}
     //state_update(state, &keys);
 
 
     if(info->playing == false) {
-        if(keys.enter == true)  {
-            state = state_create();
-            state_update(state, &keys);
+       if(keys.enter == true)  {
+           state = state_create();
+           state_update(state, &keys);
             interface_draw_frame(state);
             return;
         }
-        else if(keys.enter == false) {
-            interface_draw_frame(state);
-            return;
-        }
+       // else if(keys.enter == false) {
+         //   interface_draw_frame(state);
+          //  return;
+     //   }
     }
-    if(info->paused == false) {
-        state_update(state, &keys);
-        interface_draw_frame(state);
-    }
-    else if(info->paused == true) {
-        if(keys.p == false) {
-            state_update(state, &keys);
-            interface_draw_frame(state);
-            return;
-        }
-    }
+   // if(info->paused == false) {
+     //   state_update(state, &keys);
+       // interface_draw_frame(state);
+   // }
+    //else if(info->paused == true) {
+      //  if(keys.p == false) {
+        //    state_update(state, &keys);
+          //  interface_draw_frame(state);
+       // }
+    //}
 
-
-
-    
 }
 
 int main() {

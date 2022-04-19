@@ -7,7 +7,7 @@
 void interface_init() {
     //Αρχικοποίηση του παραθύρου
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "game");
-    //SetTargerFPS(60);
+    SetTargetFPS(60);
 
 }
 
@@ -32,26 +32,28 @@ void interface_draw_frame(State state) {
 
 
     StateInfo info = state_info(state);
-    //if(IsKeyDown(KEY_RIGHT)) info->jet->rect.x +=2;
+    
 
     //int x_offset = (state_info(state)->jet->rect.x - 200 );
     int x_offset = 0;
-    int y_offset = -(SCREEN_HEIGHT - 100);
+    int y_offset = -SCREEN_HEIGHT + 100;
 
     Camera2D camera = { 0 };
-    camera.target = (Vector2) {(SCREEN_WIDTH - 35)/2, info->jet->rect.y};
-    camera.offset = (Vector2) {(SCREEN_WIDTH - 35)/2 , y_offset + 700};
+    int x_target = (SCREEN_WIDTH - 35)/2;
+    camera.target = (Vector2) {x_target, info->jet->rect.y};
+    camera.offset = (Vector2) {x_target , y_offset + 700};
     camera.zoom = 1.0f;
 
     BeginMode2D(camera);
 
     
     DrawCircle(info->jet->rect.x - x_offset , info->jet->rect.y - y_offset, 15, RED);
-
+    if(info->missile != NULL)
+       DrawRectangle(info->missile->rect.x - x_offset , info->missile->rect.y - y_offset, info->missile->rect.width, info->missile->rect.height, RED); 
     printf("x: %f  y: %f\n", info->jet->rect.x, info->jet->rect.y);
     
-    int state_y_offset = -info->jet->rect.y;
-    List objects = state_objects(state, -state_y_offset + SCREEN_WIDTH, -state_y_offset - 2*SCREEN_WIDTH);
+    int state_objects_offset = -info->jet->rect.y;
+    List objects = state_objects(state, -state_objects_offset , -state_objects_offset - 2*SCREEN_WIDTH);
 
     for(ListNode node=list_first(objects) ; node!=LIST_EOF ; node=list_next(objects, node)) {
 		Object obj = list_node_value(objects, node);
@@ -65,7 +67,8 @@ void interface_draw_frame(State state) {
             DrawRectangleRec(temp_obj2->rect, BROWN);
         }
         if(obj->type == WARSHIP) {
-             DrawRectangle(obj->rect.x - x_offset , obj->rect.y - y_offset, obj->rect.width, obj->rect.height, PINK);
+             Object temp_obj3 = create_object(WARSHIP, obj->rect.x, obj->rect.y - y_offset, obj->rect.width, obj->rect.height);
+             DrawRectangleRec(temp_obj3->rect, PINK);
         }   
     }
     if((!info->playing)) {
