@@ -211,27 +211,30 @@ void state_update(State state, KeyState keys) {
 				if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP) {
 					if((state->info.missile != NULL)) {
 						if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
-							state->info.missile = NULL;
+							//state->info.missile = NULL;
 							list_remove_next(list_objects, last_node);
-							free(last_node);
+							state->info.missile = NULL;
+							//free(last_node);
 							state->info.score +=10;
 						}
 					}
 				}
 			}
 			last_node=node;	
-			if(obj->type == HELICOPTER || obj->type == WARSHIP || obj->type == TERRAIN) {
-				Object Enemy = obj;
-				if (obj->type == TERRAIN) {
-					if(CheckCollisionRecs(obj->rect,Enemy->rect)) {
-						if((Enemy->forward)) {
-							Enemy->forward = false;
+			if(obj->type == HELICOPTER || obj->type == WARSHIP) {
+				for(ListNode node=list_first(list_objects); node!=LIST_EOF; node=list_next(list_objects,node)){
+					Object terrain = list_node_value(list_objects,node);
+					if (terrain->type == TERRAIN) {
+						if(CheckCollisionRecs(terrain->rect,obj->rect)) {
+							if((obj->forward)) {
+								obj->forward = false;
+							}
+							else if(!(obj->forward)) {
+								obj->forward = true;
+							}
 						}
-						else if(!(Enemy->forward)) {
-							Enemy->forward = true;
-						}
-					}
-				}	
+					}	
+				}
 			}
 		}
 		if(keys->p) {
