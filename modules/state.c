@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "ADTList.h"
 #include "state.h"
-
+#include <stdio.h>
 
 // Οι ολοκληρωμένες πληροφορίες της κατάστασης του παιχνιδιού.
 // Ο τύπος State είναι pointer σε αυτό το struct, αλλά το ίδιο το struct
@@ -154,7 +154,7 @@ void state_update(State state, KeyState keys) {
 			state->info.jet->rect.y -=2 * (state->speed_factor);
 		if(keys->right)
 			state->info.jet->rect.x +=3 * (state->speed_factor);
-		if(keys->left)
+		else if(keys->left)
 			state->info.jet->rect.x -=3 * (state->speed_factor);
 		if(keys->space) {
 			if((state->info.missile == NULL)) {
@@ -166,18 +166,17 @@ void state_update(State state, KeyState keys) {
 			if((abs(state->info.missile->rect.y) -(abs(state->info.jet->rect.y)) > 800))
 				state->info.missile = NULL;
 		}
-		ListNode last_node = LIST_BOF;
-
-		int state_objects_offset = -state->info.jet->rect.y;
-		List list_objects = state_objects(state,-state_objects_offset ,-state_objects_offset - 2*SCREEN_HEIGHT );
-		for(ListNode node=list_first(list_objects) ; node!=LIST_EOF ; node=list_next(list_objects, node)) {
-			Object obj = list_node_value(list_objects, node);
-			if(obj->type == BRIDGE) {
-			if(abs(state->info.jet->rect.y) - abs(obj->rect.y) >= 800) {
-					add_objects(state, obj->rect.y);
-					state->speed_factor = 1.3 * state->speed_factor;
-				}
-			}
+		//int state_objects_offset = -state->info.jet->rect.y;
+		//List list_objects = state_objects(state,-state_objects_offset ,-state_objects_offset - 2*SCREEN_HEIGHT );
+		ListNode last_node;
+		for(ListNode node=list_first(state->objects) ; node!=LIST_EOF ; node=list_next(state->objects, node)) {
+			Object obj = list_node_value(state->objects, node);
+			//if(obj->type == BRIDGE) {
+			//if(abs(state->info.jet->rect.y) - abs(obj->rect.y) >= 800) {
+			//		//add_objects(state, obj->rect.y);
+			//		state->speed_factor = 1.3 * state->speed_factor;
+			//	}
+			//B}
 			if(obj->forward) {
 				if((obj->type == HELICOPTER)) {
 					obj->rect.x +=4 * (state->speed_factor);
@@ -207,48 +206,68 @@ void state_update(State state, KeyState keys) {
 						}
 					}
 				}
-				//ListNode last_node;
 				if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP) {
 					if((state->info.missile != NULL)) {
 						if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
-							//state->info.missile = NULL;
-							list_remove_next(list_objects, last_node);
+							list_remove_next(state->objects, last_node);
 							state->info.missile = NULL;
-							//free(last_node);
 							state->info.score +=10;
+							return;
 						}
 					}
 				}
 			}
 			last_node=node;	
 			if(obj->type == HELICOPTER || obj->type == WARSHIP) {
-				for(ListNode node=list_first(list_objects); node!=LIST_EOF; node=list_next(list_objects,node)){
-					Object terrain = list_node_value(list_objects,node);
+				for(ListNode node=list_first(state->objects); node!=LIST_EOF; node=list_next(state->objects,node)){
+					Object terrain = list_node_value(state->objects,node);
 					if (terrain->type == TERRAIN) {
 						if(CheckCollisionRecs(terrain->rect,obj->rect)) {
 							if((obj->forward)) {
 								obj->forward = false;
+								obj->rect.x = terrain->rect.x - obj->rect.width;
 							}
 							else if(!(obj->forward)) {
 								obj->forward = true;
+								obj->rect.x = terrain->rect.width;
 							}
 						}
 					}	
 				}
 			}
 		}
-		if(keys->p) {
-			state->info.paused = true;
-		}	
-		if((state->info.paused == true)) {
-			if(keys->n) {
-				//under construction
-				return;
+		int bridge_num = 0;
+
+		for(ListNode node=list_first(state->objects); node!=LIST_EOF; node=list_next(state->objects,node)) {
+			Object obj = list_node_value(state->objects,node);
+			if(obj->type == BRIDGE) {
+				bridge_num++;
 			}
-			if(keys->p) {
-				state->info.paused = false;
-			}
+			//if(bridge_num == BRIDGE_NUM -19) {
+				//if(state->info.jet->rect.y - SCREEN_HEIGHT >= obj->rect.y) 
+				//add_objects(state,obj->rect.y);
+				//state->speed_factor += state->speed_factor *0.3;
+			//}
 		}
+
+
+		if(keys->p == true && state->info.paused == false) {
+			state->info.paused = true;
+			return;
+		}
+		if(keys->p == true && state->info.paused == true) {
+			state->info.paused = false;
+			return;
+		}
+		//if((state->info.paused == true)) {
+		//	if(keys->n) {
+				//under construction
+		//		return;
+		//	}
+			//if(keys->p) {
+			//	state->info.paused = false;
+			//}
+		//}
 	}
 	// //state->info.playing = false;
 	// if((state->info.playing == false)) {
