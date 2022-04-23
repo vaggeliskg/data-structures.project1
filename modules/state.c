@@ -166,17 +166,9 @@ void state_update(State state, KeyState keys) {
 			if((abs(state->info.missile->rect.y) -(abs(state->info.jet->rect.y)) > 800))
 				state->info.missile = NULL;
 		}
-		//int state_objects_offset = -state->info.jet->rect.y;
-		//List list_objects = state_objects(state,-state_objects_offset ,-state_objects_offset - 2*SCREEN_HEIGHT );
 		ListNode last_node;
 		for(ListNode node=list_first(state->objects) ; node!=LIST_EOF ; node=list_next(state->objects, node)) {
 			Object obj = list_node_value(state->objects, node);
-			//if(obj->type == BRIDGE) {
-			//if(abs(state->info.jet->rect.y) - abs(obj->rect.y) >= 800) {
-			//		//add_objects(state, obj->rect.y);
-			//		state->speed_factor = 1.3 * state->speed_factor;
-			//	}
-			//B}
 			if(obj->forward) {
 				if((obj->type == HELICOPTER)) {
 					obj->rect.x +=4 * (state->speed_factor);
@@ -195,10 +187,10 @@ void state_update(State state, KeyState keys) {
 			}
 			//έλεγχος συγκρούσεων
 			if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP || obj->type == TERRAIN ) {
-				if(CheckCollisionRecs(state->info.jet->rect, obj->rect)) {
-					state->info.playing = false;
-					return;
-				}
+				//if(CheckCollisionRecs(state->info.jet->rect, obj->rect)) {
+				//	state->info.playing = false;
+				//	return;
+				//}
 				if(obj->type == TERRAIN) {
 					if((state->info.missile != NULL)) {
 						if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
@@ -236,19 +228,24 @@ void state_update(State state, KeyState keys) {
 				}
 			}
 		}
-		int bridge_num = 0;
-
+		int bridge_counter = 0;
+		Object last_bridge;
+		Object object_temp;
 		for(ListNode node=list_first(state->objects); node!=LIST_EOF; node=list_next(state->objects,node)) {
-			Object obj = list_node_value(state->objects,node);
-			if(obj->type == BRIDGE) {
-				bridge_num++;
-			}
-			//if(bridge_num == BRIDGE_NUM -19) {
-				//if(state->info.jet->rect.y - SCREEN_HEIGHT >= obj->rect.y) 
-				//add_objects(state,obj->rect.y);
-				//state->speed_factor += state->speed_factor *0.3;
-			//}
+		 	object_temp = list_node_value(state->objects, node);
+			if(object_temp->type == BRIDGE) {
+				last_bridge = object_temp;
+				bridge_counter++;
+		 	}
 		}
+		if(bridge_counter == 1)  {
+			if(abs(last_bridge->rect.y)- abs(state->info.jet->rect.y) <=SCREEN_HEIGHT) {
+				add_objects(state, last_bridge->rect.y);
+				state->speed_factor += state->speed_factor * 0.3;
+			}
+		}
+
+
 
 
 		if(keys->p == true && state->info.paused == false) {

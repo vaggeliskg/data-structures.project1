@@ -13,7 +13,6 @@ Texture warshipr_img;
 Texture warshipl_img;
 Texture wall_img;
 
-
 void interface_init() {
     //Αρχικοποίηση του παραθύρου
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "game");
@@ -30,18 +29,6 @@ void interface_close() {
     CloseWindow();
 }
 
-
-
-
-// static Object create_object(ObjectType type, float x, float y, float width, float height) {
-// 	Object obj = malloc(sizeof(*obj));
-// 	obj->type = type;
-// 	obj->rect.x = x;
-// 	obj->rect.y = y;
-// 	obj->rect.width = width;
-// 	obj->rect.height = height;
-// 	return obj;
-// }
 
 //Draw Game
 void interface_draw_frame(State state) {
@@ -63,7 +50,6 @@ void interface_draw_frame(State state) {
     camera.zoom = 1.0f;
 
     BeginMode2D(camera);
-
     
     DrawTexture(jet_img,info->jet->rect.x - x_offset , info->jet->rect.y - y_offset,WHITE);
     if(info->missile != NULL)
