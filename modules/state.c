@@ -187,10 +187,10 @@ void state_update(State state, KeyState keys) {
 			}
 			//έλεγχος συγκρούσεων
 			if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP || obj->type == TERRAIN ) {
-				//if(CheckCollisionRecs(state->info.jet->rect, obj->rect)) {
-				//	state->info.playing = false;
-				//	return;
-				//}
+				if(CheckCollisionRecs(state->info.jet->rect, obj->rect)) {
+					state->info.playing = false;
+					return;
+				}
 				if(obj->type == TERRAIN) {
 					if((state->info.missile != NULL)) {
 						if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
@@ -244,10 +244,6 @@ void state_update(State state, KeyState keys) {
 				state->speed_factor += state->speed_factor * 0.3;
 			}
 		}
-
-
-
-
 		if(keys->p == true && state->info.paused == false) {
 			state->info.paused = true;
 			return;
@@ -259,7 +255,7 @@ void state_update(State state, KeyState keys) {
 		//if((state->info.paused == true)) {
 		//	if(keys->n) {
 				//under construction
-		//		return;
+		//		return;asas
 		//	}
 			//if(keys->p) {
 			//	state->info.paused = false;

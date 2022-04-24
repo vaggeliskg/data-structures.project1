@@ -17,37 +17,24 @@ void update_and_draw() {
         .p = IsKeyDown(KEY_P),
     };
     StateInfo info = state_info(state);
-    //interface_draw_frame(state);
-    //if(info->playing == true) {
-        state_update(state, &keys);
-        interface_draw_frame(state);
-    //}
-    //state_update(state, &keys);
+   
+       state_update(state, &keys);
+       interface_draw_frame(state);
+  
 
 
     if(info->playing == false) {
-       if(keys.enter == true)  {
-           state = state_create();
-           state_update(state, &keys);
-            interface_draw_frame(state);
-            return;
-        }
-       // else if(keys.enter == false) {
-         //   interface_draw_frame(state);
-          //  return;
-     //   }
+      if(keys.enter == true)  {
+        state = state_create();
+        state_update(state, &keys);
+        interface_draw_frame(state);
+        return;
+      }
+      else if(keys.enter == false) {
+        interface_draw_frame(state);
+        return;
+      }
     }
-   // if(info->paused == false) {
-     //   state_update(state, &keys);
-       // interface_draw_frame(state);
-   // }
-    //else if(info->paused == true) {
-      //  if(keys.p == false) {
-        //    state_update(state, &keys);
-          //  interface_draw_frame(state);
-       // }
-    //}
-
 }
 
 int main() {

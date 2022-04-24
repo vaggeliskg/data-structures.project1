@@ -3,6 +3,7 @@
 #include "ADTList.h"
 #include "state.h"
 #include "set_utils.h"
+#include <stdio.h>
 
 
 // Οι ολοκληρωμένες πληροφορίες της κατάστασης του παιχνιδιού.
@@ -107,7 +108,11 @@ int compare_objects(Pointer a, Pointer b) {
         return -1;
     else if(abs(obj_a->rect.y) > abs(obj_b->rect.y))
         return 1;
-    else if(a < b)
+	else if(abs(obj_a->rect.x) < abs(obj_b->rect.x))
+		return -1;
+	else if(abs(obj_a->rect.x) > abs(obj_b->rect.x))
+		return 1;
+	else if(a < b)
         return -1;
 	else if(a > b)
 		return 1;
@@ -229,23 +234,32 @@ void state_update(State state, KeyState keys) {
 							}	
 						}
 					}
-					if(obj->type == HELICOPTER || obj->type == WARSHIP) {
-						Object Enemy = obj;
-
-						if (obj->type == TERRAIN) {
-                			float x_min = obj->rect.width;
-                			float x_max = obj->rect.x;
-
-								if(x_max == Enemy->rect.width) {
-									if((Enemy->forward)) {
-										Enemy->forward = false;
-									}
-									else if(x_min == Enemy->rect.x) {
-										Enemy->forward = true;
-									}
-								}
-						}	
-					}		
+					// float x_min;
+					// float x_max;
+					// if(obj->type == HELICOPTER || obj->type == WARSHIP) {
+					// 	for(ListNode node=list_first(list_objects) ; node!=LIST_EOF ; node=list_next(list_objects, node)) {
+					// 		Object terrain = list_node_value(list_objects, node);
+					// 		if (terrain->type == TERRAIN) {
+					// 			//if(terrain->rect.x == 0) {
+					// 				x_min = terrain->rect.x + terrain->rect.width;
+					// 				if(obj->rect.x == x_min) {
+					// 					if(!(obj->forward)) {
+					// 					obj->forward = true;
+					// 					}
+					// 				}
+					// 			//}
+					// 			//else if(terrain->rect.x >0) {
+					// 				x_max = SCREEN_WIDTH - terrain->rect.x;
+					// 				if(obj->rect.x + obj->rect.width == x_max) {
+					// 					if((obj->forward)) {
+					// 					obj->forward = false;
+					// 					}
+					// 				}
+					// 		//	}
+					// 		}
+					// 	}		
+				//}
+			}
 			// 		if((state->info.playing == false)) {
 			// 			if(keys->enter)
 			// 				state->info.playing = true;
@@ -267,7 +281,7 @@ void state_update(State state, KeyState keys) {
 			//for(ListNode node=list_first(list_objects) ; node!=LIST_EOF ; node=list_next(list_objects, node)) {
 				//τρεχει τη λιστα με τα αντικειμενα και με ενα καουντερ μετρα της γεφυρες μολις φτασει στην τελευταια απο κει και μετα προσθετει objects 
 		}
- 	}
+ 	
 }
 
 // Καταστρέφει την κατάσταση state ελευθερώνοντας τη δεσμευμένη μνήμη.

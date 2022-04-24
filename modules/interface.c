@@ -33,7 +33,7 @@ void interface_close() {
 //Draw Game
 void interface_draw_frame(State state) {
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground(BLUE);
 
 
     StateInfo info = state_info(state);
@@ -51,7 +51,7 @@ void interface_draw_frame(State state) {
 
     BeginMode2D(camera);
     
-    DrawTexture(jet_img,info->jet->rect.x - x_offset , info->jet->rect.y - y_offset,WHITE);
+    DrawTexture(jet_img,info->jet->rect.x - x_offset , info->jet->rect.y - y_offset,BLUE);
     if(info->missile != NULL)
        DrawRectangle(info->missile->rect.x - x_offset , info->missile->rect.y - y_offset, info->missile->rect.width, info->missile->rect.height, RED); 
     //printf("x: %f  y: %f\n", info->jet->rect.x, info->jet->rect.y);
@@ -67,9 +67,9 @@ void interface_draw_frame(State state) {
         if(obj->type == HELICOPTER) {
             if(obj->forward) {
             //Object temp_obj = create_object(HELICOPTER, obj->rect.x, obj->rect.y - y_offset, obj->rect.width, obj->rect.height);
-            DrawTexture(helir_img,obj->rect.x,obj->rect.y-y_offset,WHITE);
+            DrawTexture(helir_img,obj->rect.x,obj->rect.y-y_offset,BLUE);
             }
-            else DrawTexture(helil_img,obj->rect.x,obj->rect.y-y_offset,WHITE);
+            else DrawTexture(helil_img,obj->rect.x,obj->rect.y-y_offset,BLUE);
         }
          if(obj->type == BRIDGE) {
             //Object temp_obj2 = create_object(BRIDGE, obj->rect.x, obj->rect.y - y_offset, obj->rect.width, obj->rect.height);
@@ -81,9 +81,9 @@ void interface_draw_frame(State state) {
             // DrawRectangle(obj->rect.x - x_offset , obj->rect.y - y_offset, obj->rect.width, obj->rect.height, BLUE);
              //Object temp_obj3 = create_object(WARSHIP, obj->rect.x, obj->rect.y - y_offset, obj->rect.width, obj->rect.height);
             if(obj->forward) {
-            DrawTexture(warshipr_img,obj->rect.x,obj->rect.y-y_offset,WHITE);
+            DrawTexture(warshipr_img,obj->rect.x,obj->rect.y-y_offset,BLUE);
             }
-            else DrawTexture(warshipl_img,obj->rect.x,obj->rect.y-y_offset,WHITE);
+            else DrawTexture(warshipl_img,obj->rect.x,obj->rect.y-y_offset,BLUE);
         }   
     }
 
