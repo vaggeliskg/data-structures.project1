@@ -38,11 +38,11 @@ void interface_draw_frame(State state) {
 
     StateInfo info = state_info(state);
     
-
-    //int x_offset = (state_info(state)->jet->rect.x - 200 );
+// offset για μετάβαση από συντεταγμένες state σε οθόνης
     int x_offset = 0;
     int y_offset = -SCREEN_HEIGHT + 100;
 
+//κάμερα για να ακολουθεί το τζετ στον άξονα ψ
     Camera2D camera = { 0 };
     int x_target = (SCREEN_WIDTH - 35)/2;
     camera.target = (Vector2) {x_target, info->jet->rect.y};
@@ -50,12 +50,10 @@ void interface_draw_frame(State state) {
     camera.zoom = 1.0f;
 
     BeginMode2D(camera);
-    
+    //σχεδίαση αντικειμένων + αλλαγή εικόνας ώστε τα αντικείμενα να κοιτάνε προς την κατεύθυνση που πάνε
     DrawTexture(jet_img,info->jet->rect.x - x_offset , info->jet->rect.y - y_offset,BLUE);
     if(info->missile != NULL)
        DrawRectangle(info->missile->rect.x - x_offset , info->missile->rect.y - y_offset, info->missile->rect.width, info->missile->rect.height, RED); 
-    //printf("x: %f  y: %f\n", info->jet->rect.x, info->jet->rect.y);
-    
     int state_objects_offset = -info->jet->rect.y;
     List objects = state_objects(state, -state_objects_offset + 100, -state_objects_offset - 5*SCREEN_WIDTH);
 
@@ -66,29 +64,23 @@ void interface_draw_frame(State state) {
         }
         if(obj->type == HELICOPTER) {
             if(obj->forward) {
-            //Object temp_obj = create_object(HELICOPTER, obj->rect.x, obj->rect.y - y_offset, obj->rect.width, obj->rect.height);
-            DrawTexture(helir_img,obj->rect.x,obj->rect.y-y_offset,BLUE);
+                DrawTexture(helir_img,obj->rect.x,obj->rect.y-y_offset,BLUE);
             }
             else DrawTexture(helil_img,obj->rect.x,obj->rect.y-y_offset,BLUE);
         }
          if(obj->type == BRIDGE) {
-            //Object temp_obj2 = create_object(BRIDGE, obj->rect.x, obj->rect.y - y_offset, obj->rect.width, obj->rect.height);
-             //DrawRectangle(obj->rect.x - x_offset , obj->rect.y - y_offset, obj->rect.width, obj->rect.height, YELLOW);
             DrawTexture(wall_img,obj->rect.x,obj->rect.y-y_offset,WHITE);
         }
         if(obj->type == WARSHIP) {
-             
-            // DrawRectangle(obj->rect.x - x_offset , obj->rect.y - y_offset, obj->rect.width, obj->rect.height, BLUE);
-             //Object temp_obj3 = create_object(WARSHIP, obj->rect.x, obj->rect.y - y_offset, obj->rect.width, obj->rect.height);
             if(obj->forward) {
             DrawTexture(warshipr_img,obj->rect.x,obj->rect.y-y_offset,BLUE);
             }
             else DrawTexture(warshipl_img,obj->rect.x,obj->rect.y-y_offset,BLUE);
         }   
     }
-
-    //DrawText(TextFormat("%04i",info->score), 20, -100, 40, GRAY);
-    //DrawFPS(SCREEN_WIDTH-80, -100);
+    // σχεδιασμός FPS και σκορ
+    DrawText(TextFormat("%04i",info->score), 20, info->jet->rect.y +110, 20, WHITE);
+    DrawFPS(SCREEN_WIDTH-80, info->jet->rect.y +110);
 
 
 
@@ -96,9 +88,9 @@ void interface_draw_frame(State state) {
         DrawText(
             "PRESS [ENTER] TO PLAY AGAIN ",
              GetScreenWidth() / 2 - MeasureText( "PRESS [ENTER] TO PLAY AGAIN ", 20) / 2,
-             GetScreenHeight() / 2 - 50,20, GRAY
+            info->jet->rect.y + GetScreenHeight() / 2 - 50,20, WHITE
         );
     }
-    //EndMode2D();
+    EndMode2D();
     EndDrawing();
 }

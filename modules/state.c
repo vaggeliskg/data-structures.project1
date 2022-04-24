@@ -145,30 +145,35 @@ List state_objects(State state, float y_from, float y_to) {
 // Το keys περιέχει τα πλήκτρα τα οποία ήταν πατημένα κατά το frame αυτό.
 
 void state_update(State state, KeyState keys) {
+	//κίνηση jet
 	if(state->info.playing) {
-		if(!(keys->up))
-			state->info.jet->rect.y -=3 * (state->speed_factor);
-		else if(keys->up)
+		if(keys->up)
 			state->info.jet->rect.y -=6 * (state->speed_factor);
 		else if(keys->down)
 			state->info.jet->rect.y -=2 * (state->speed_factor);
+		else 
+			state->info.jet->rect.y -=3 * (state->speed_factor);
 		if(keys->right)
 			state->info.jet->rect.x +=3 * (state->speed_factor);
 		else if(keys->left)
 			state->info.jet->rect.x -=3 * (state->speed_factor);
+		//δημιουργία πυραύλου
 		if(keys->space) {
 			if((state->info.missile == NULL)) {
 			state->info.missile = create_object(MISSILE,state->info.jet->rect.x,state->info.jet->rect.y,5,10);
 			}
 		}
+		//κίνηση πυραύλου
 		if((state->info.missile != NULL)) {
 			state->info.missile->rect.y -=10 *(state->speed_factor);
 			if((abs(state->info.missile->rect.y) -(abs(state->info.jet->rect.y)) > 800))
 				state->info.missile = NULL;
 		}
+		//κόμβος για να λειτουργεί η διαγραφή αντικειμένου από την list_remove_next
 		ListNode last_node;
 		for(ListNode node=list_first(state->objects) ; node!=LIST_EOF ; node=list_next(state->objects, node)) {
 			Object obj = list_node_value(state->objects, node);
+			//κινήσεις αντικειμένων
 			if(obj->forward) {
 				if((obj->type == HELICOPTER)) {
 					obj->rect.x +=4 * (state->speed_factor);
@@ -186,11 +191,13 @@ void state_update(State state, KeyState keys) {
 				}
 			}
 			//έλεγχος συγκρούσεων
+			//τζετ με οτιδήποτε
 			if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP || obj->type == TERRAIN ) {
 				if(CheckCollisionRecs(state->info.jet->rect, obj->rect)) {
 					state->info.playing = false;
 					return;
 				}
+				//πυραύλου με έδαφος
 				if(obj->type == TERRAIN) {
 					if((state->info.missile != NULL)) {
 						if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
@@ -198,6 +205,7 @@ void state_update(State state, KeyState keys) {
 						}
 					}
 				}
+				//πυραύλου με γέφυρες πλοία και ελικόπτερα
 				if(obj->type == BRIDGE || obj->type == HELICOPTER || obj->type == WARSHIP) {
 					if((state->info.missile != NULL)) {
 						if(CheckCollisionRecs(state->info.missile->rect, obj->rect)) {
@@ -209,7 +217,9 @@ void state_update(State state, KeyState keys) {
 					}
 				}
 			}
+			// ο κόμβος παιρνει το αντικείμενο πριν από αυτό που γίνεται η σύγκρουση ώστε να λειτουργεί σώστα
 			last_node=node;	
+			//συγκρούσεις αντικειμένων με το έδαφος
 			if(obj->type == HELICOPTER || obj->type == WARSHIP) {
 				for(ListNode node=list_first(state->objects); node!=LIST_EOF; node=list_next(state->objects,node)){
 					Object terrain = list_node_value(state->objects,node);
@@ -228,6 +238,7 @@ void state_update(State state, KeyState keys) {
 				}
 			}
 		}
+		//άπειρο μήκος
 		int bridge_counter = 0;
 		Object last_bridge;
 		Object object_temp;
@@ -244,6 +255,7 @@ void state_update(State state, KeyState keys) {
 				state->speed_factor += state->speed_factor * 0.3;
 			}
 		}
+		//πάυση και εκκίνηση
 		if(keys->p == true && state->info.paused == false) {
 			state->info.paused = true;
 			return;
@@ -252,29 +264,9 @@ void state_update(State state, KeyState keys) {
 			state->info.paused = false;
 			return;
 		}
-		//if((state->info.paused == true)) {
-		//	if(keys->n) {
-				//under construction
-		//		return;asas
-		//	}
-			//if(keys->p) {
-			//	state->info.paused = false;
-			//}
-		//}
 	}
-	// //state->info.playing = false;
-	// if((state->info.playing == false)) {
-	// 	//keys->enter = true;
-	// 	if(keys->enter) {
-	// 		state_create();
-			//state_update(state, keys);
-			//return;
-	//	}
-	//}
-	
+
 }
-
-
 // Καταστρέφει την κατάσταση state ελευθερώνοντας τη δεσμευμένη μνήμη.
 
 //void state_destroy(State state) {

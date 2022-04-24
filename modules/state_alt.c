@@ -255,31 +255,11 @@ void state_update(State state, KeyState keys) {
 					// 					obj->forward = false;
 					// 					}
 					// 				}
-					// 		//	}
+					// 			}
 					// 		}
 					// 	}		
 				//}
-			}
-			// 		if((state->info.playing == false)) {
-			// 			if(keys->enter)
-			// 				state->info.playing = true;
-			// 		}
-			// 		if(keys->p) {
-			// 			state->info.paused = true;
-			// 		}
-			// 		if((state->info.paused == true)) {
-			// 			if(keys->n) {
-			// 				state_update(state,keys);
-			// 				return;
-			// 			}
-			// 			if(keys->p) {
-			// 			state->info.paused = false;
-			// 			}
-    
-			// 		}
- 			// }
-			//for(ListNode node=list_first(list_objects) ; node!=LIST_EOF ; node=list_next(list_objects, node)) {
-				//τρεχει τη λιστα με τα αντικειμενα και με ενα καουντερ μετρα της γεφυρες μολις φτασει στην τελευταια απο κει και μετα προσθετει objects 
+			} 
 		}
  	
 }
