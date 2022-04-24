@@ -172,13 +172,13 @@ List state_objects(State state, float y_from, float y_to) {
 
 void state_update(State state, KeyState keys) {
   	if(state->info.playing) {
-       		if(!(keys->up))
-			    state->info.jet->rect.y -=3 * (state->speed_factor);
 		    if(keys->up)
 			    state->info.jet->rect.y -=6 * (state->speed_factor);
-		    if(keys->down)
+		    else if(keys->down)
 			    state->info.jet->rect.y -=2 * (state->speed_factor);
-		    if(keys->right)
+		    else 
+				state->info.jet->rect.y -=3 * (state->speed_factor);
+			if(keys->right)
 			    state->info.jet->rect.x +=3 * (state->speed_factor);
 		    if(keys->left)
 			    state->info.jet->rect.x -=3 * (state->speed_factor);

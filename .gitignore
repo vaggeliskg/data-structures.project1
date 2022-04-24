@@ -15,4 +15,5 @@
 !.gitignore
 !README.md
 !.vscode/*.json
-!.png
+!*.png
+!*.wav
