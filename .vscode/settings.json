@@ -28,4 +28,7 @@
 		"arg7": "#",
 		"arg8": "#",
 	},
+	"files.associations": {
+		"cstdlib": "c"
+	},
 }
