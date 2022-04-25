@@ -13,8 +13,8 @@ Pointer set_find_eq_or_greater(Set set, Pointer value) {
     }
     else if(node == SET_EOF) {
         set_insert(set, value);
-        SetNode temp_node = set_find_node(set, value);
-        node = set_next(set, temp_node);
+        SetNode new_node = set_find_node(set, value);
+        node = set_next(set, new_node);
         set_remove(set, value);
         return set_node_value(set, node);
     }
@@ -35,8 +35,8 @@ Pointer set_find_eq_or_smaller(Set set, Pointer value) {
     }
     else if(node == SET_EOF) {
         set_insert(set, value);
-        SetNode temp_node = set_find_node(set, value);
-        node = set_previous(set, temp_node);
+        SetNode new_node = set_find_node(set, value);
+        node = set_previous(set, new_node);
         set_remove(set, value);
         return set_node_value(set, node);
     }

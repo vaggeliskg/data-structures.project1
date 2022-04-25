@@ -238,7 +238,7 @@ void state_update(State state, KeyState keys) {
 				}
 			}
 		}
-		//άπειρο μήκος
+		//άπειρο μήκος μετρώντας τις γέφυρες τις πίστας
 		int bridge_counter = 0;
 		Object last_bridge;
 		Object object_temp;
@@ -256,11 +256,11 @@ void state_update(State state, KeyState keys) {
 			}
 		}
 		//πάυση και εκκίνηση
-		if(keys->p == true && state->info.paused == false) {
+		if(state->info.paused == false  && keys->p == true  ) {
 			state->info.paused = true;
 			return;
 		}
-		if(keys->p == true && state->info.paused == true) {
+		else if(state->info.paused == true && keys->p == true ) {
 			state->info.paused = false;
 			return;
 		}

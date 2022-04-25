@@ -60,7 +60,7 @@ void interface_draw_frame(State state) {
     for(ListNode node=list_first(objects) ; node!=LIST_EOF ; node=list_next(objects, node)) {
 		Object obj = list_node_value(objects, node);
         if(obj->type== TERRAIN) {
-            DrawRectangle(obj->rect.x - x_offset , obj->rect.y - y_offset, obj->rect.width, obj->rect.height, GREEN);
+            DrawRectangle(obj->rect.x - x_offset , obj->rect.y - y_offset, obj->rect.width, obj->rect.height, DARKGREEN);
         }
         if(obj->type == HELICOPTER) {
             if(obj->forward) {
@@ -78,7 +78,7 @@ void interface_draw_frame(State state) {
             else DrawTexture(warshipl_img,obj->rect.x,obj->rect.y-y_offset,BLUE);
         }   
     }
-    // σχεδιασμός FPS και σκορ
+    //σχεδιασμός FPS και σκορ
     DrawText(TextFormat("%04i",info->score), 20, info->jet->rect.y +110, 20, WHITE);
     DrawFPS(SCREEN_WIDTH-80, info->jet->rect.y +110);
 
@@ -88,6 +88,13 @@ void interface_draw_frame(State state) {
         DrawText(
             "PRESS [ENTER] TO PLAY AGAIN ",
              GetScreenWidth() / 2 - MeasureText( "PRESS [ENTER] TO PLAY AGAIN ", 20) / 2,
+            info->jet->rect.y + GetScreenHeight() / 2 - 50,20, WHITE
+        );
+    }
+    if(info->paused) {
+        DrawText(
+        "PRESS [P] TO PLAY  ",
+             GetScreenWidth() / 2 - MeasureText( "PRESS [P] TO PLAY  ", 20) / 2,
             info->jet->rect.y + GetScreenHeight() / 2 - 50,20, WHITE
         );
     }

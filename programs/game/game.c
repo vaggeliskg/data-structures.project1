@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "interface.h"
 #include "state.h"
+#include <stdlib.h>
 
 State state;
 
@@ -11,18 +12,30 @@ void update_and_draw() {
         .right = IsKeyDown(KEY_RIGHT),
         .up = IsKeyDown(KEY_UP),
         .down = IsKeyDown(KEY_DOWN),
-        .space = IsKeyDown(KEY_SPACE),
+        .space = IsKeyPressed(KEY_SPACE),
         .enter = IsKeyDown(KEY_ENTER),
-        .n = IsKeyDown(KEY_N),
-        .p = IsKeyDown(KEY_P),
+        .n = IsKeyPressed(KEY_N),
+        .p = IsKeyPressed(KEY_P),
     };
+    //pause and start
     StateInfo info = state_info(state);
-   
+    if(info->playing && info->paused == false) {
        state_update(state, &keys);
        interface_draw_frame(state);
-  
-
-
+    }
+    else if(info->playing && info->paused == true) {
+      if(keys.p == true) {
+        state_update(state, &keys);
+        interface_draw_frame(state);
+      }
+      else if(keys.p == false)
+        interface_draw_frame(state);
+      if(keys.n == true) {
+        state_update(state, &keys);
+        interface_draw_frame(state);
+      }
+    }
+    //start over if game is over
     if(info->playing == false) {
       if(keys.enter == true)  {
         state = state_create();
